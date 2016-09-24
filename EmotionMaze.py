@@ -59,7 +59,7 @@ def findneighbor(startX,startY):
     elif(neighborWall == 3 and startY != 9):
         return 3
     else:
-        return False
+        return -1
 
 
 def visited(square):
