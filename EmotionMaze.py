@@ -86,25 +86,27 @@ def addpath(startX, startY, int):
     global visited
     current = maze[startX][startY]
     print("Add Path in this direction..." + str(int))
+    if int == -1:
+        path = current.before
+        current.beenTo = True
+        recenter(path)
+        return visited
     if int == 0:
         path = maze[startX-1][startY]
         current.left = False
         path.right = False
     if int == 1:
         path = maze[startX][startY-1]
-        current.up = False
-        path.down = False
+        current.top = False
+        path.bottom = False
     if int == 2:
         path = maze[startX+1][startY]
         current.right = False
         path.left = False
     if int == 3:
         path = maze[startX][startY+1]
-        current.down = False
-        path.up = False
-    if int == -1:
-        path = current.before
-        visited -= 1
+        current.bottom = False
+        path.top = False
     current.beenTo = True
     visited = visited + 1
     path.before = current
@@ -161,39 +163,47 @@ endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth), in
                                       int(screenWidth/2+numBoxes/2*boxWidth+boxWidth), int(boxWidth * numBoxes+10), fill = "green")
 
 graphMaze = list()
-n = 0
 x = 0
 y = 0
+print("Carrot")
 # Draw Horizontal Maze Lines
 while int(yPoint) <= 10 + boxWidth * numBoxes:
     while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth):
-        if maze[x][y].top == True:  # THis will be changed to if the square has a top or is bottom of the maze
+        if maze[x][y].top == True or yPoint >= boxWidth*10:  # THis will be changed to if the square has a top or is bottom of the maze
             graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint + boxWidth, yPoint))
         else:
-            continue
+            waterMelon = "cool"
         xPoint += boxWidth
         if x < wide - 1 :
             x += 1
-        # print(xPoint)
+        print(xPoint)
     xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
     x = 0
-    if y< tall - 1:
+    if y < tall - 2:
         y += 1
     yPoint += boxWidth
-    # print(yPoint)
+    print(yPoint)
 # Draw Vertical Maze Lines
+print("potato")
+x = 0
+y = 0
 xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
 yPoint = 10
 while int(yPoint) <= boxWidth * numBoxes:
     while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth)+boxWidth:
-        if True:
+        if maze[x][y].left==True or xPoint >= boxWidth*10:
             # THis will be changed to if the square has a Left
             # or is far right of the maze(watch out for start and end of maze
             graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint, yPoint + boxWidth))
         else:
-            continue
+            waterMelon="cool"
         xPoint += boxWidth
+        if x < wide - 1 :
+            x += 1
     xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
+    x=0
+    if y < tall - 2:
+        y += 1
     yPoint += boxWidth
 
 
