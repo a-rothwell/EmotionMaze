@@ -23,7 +23,7 @@ class Player:
         self.xLocation = x
         self.yLocation = y
         self.size = size
-        self.speed = 4
+        self.speed = 5
     def playerCanMoveRight(self):
         return True
     def playerCanMoveLeft(self):
