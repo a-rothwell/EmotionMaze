@@ -1,124 +1,130 @@
-Must Install numpy package before runtime
+#Must Install numpy package before runtime
 #Must Install easyTinker before runtime
 #update
 import random
 
+
 class Square:
+    left = True
+    right = True
+    top = True
+    bottom = True
+    beenTo = False
+    before = None
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.left = True
-        self.right = True
-        self.top = True
-        self.bottom = True
-        self.visited = False
 
-class Node:
-    def __init__(self,squareOne,squareTwo):
-        self.squareOne = squareOne
-        self.squareTwo = squareTwo
-        self.connectors = list()
-        self.before = before
 
 tall = 10
 wide = 10
-visited = list()
-nodes = list()
-before = None
 maze = [[Square(x,y) for x in range(0,wide)] for y in range(0,tall)]
 
+#for i in range(0,wide):
+    #for j in range(0,tall):
+        #print("X is in square" + str(maze[i][j].x))
+        #print("Y is in square" + str(maze[i][j].y))
+visited = 0
+global startX
 startX = 0
-startY = random.randint(0, tall - 1)
-print(startX)
-print(startY)
+global startY
+#startY = random.randint(0, tall - 1)
+startY = 0
+# print("The X startPoint is: " + str(startX))
+# print("The Y startPoint is: " + str(startY))
+# print(" ")
+
 def mazeCreate():
-    if findneighbor(startX,startY) == 0 and not maze[startX - 1][startY].visited:
-        createnode(startX, startY, 0)
-    elif findneighbor(startX,startY) == 1 and not maze[startX][startY - 1].visited:
-        createnode(startX, startY, 1)
-    elif findneighbor(startX, startY) == 2 and not maze[startX + 1][startY].visited:
-        createnode(startX, startY, 2)
-    elif findneighbor(startX, startY) == 3 and not maze[startX][startY - 1].visited:
-        createnode(startX, startY, 3)
-    else:
-        if not allTried():
-            backup()
-            print("Maze Create")
-            mazeCreate()
-        else:
-            #implement graphics here
-            print("Exit")
+    global visited
+    while(tall * wide != visited):
+        addpath(startX, startY, findneighbor(startX,startY))
+
+    #implement graphics here
+    print("Exit")
 
 
 def findneighbor(startX,startY):
-    neighborWall = random.randint(0,4)
-    if neighborWall == 0 and startX != 0:
+    neighborWall = random.randint(0, 3)
+    if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
+        print("returned 0")
         return 0
-    elif neighborWall == 1 and startY != 0:
+    elif neighborWall == 1 and startY != 0 and not maze[startX][startY - 1].beenTo:
+        print("returned 1")
         return 1
-    elif neighborWall == 2 and startX != 9:
+    elif neighborWall == 2 and startX != 9  and not maze[startX + 1][startY].beenTo:
+        print("returned 2")
         return 2
-    elif neighborWall == 3 and startY != 9:
+    elif neighborWall == 3 and startY != 9 and not maze[startX][startY - 1].beenTo:
+        print("returned 3")
         return 3
     else:
-        return -1
+        neighborWall = 0
+        if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
+            print("returned 0")
+            num = 0
+            return num
+
+        neighborWall = neighborWall + 1
+        if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
+            print("returned 0")
+            num = 0
+            return num
+
+        neighborWall = neighborWall + 1
+        if neighborWall == 2 and startX != 9 and not maze[startX + 1][startY].beenTo:
+            print("returned 2")
+            num = 2
+            return num
+        neighborWall = neighborWall + 1
+        if neighborWall == 3 and startY != 9 and not maze[startX][startY - 1].beenTo:
+            print("returned 3")
+            num = 3
+            return num
+        else:
+            return -1
 
 
-
-def createnode(startX, startY, int):
-    global currentNode
-    currentNode = "Default"
+def addpath(startX, startY, int):
+    global visited
+    current = maze[startX][startY]
+    print("Add Path in this direction..." + str(int))
     if int == 0:
-        Node(maze[startX][startY],maze[startX - 1][startY])
-        Node(maze[startX][startY], maze[startX - 1][startY]).before = currentNode
-        currentNode = Node(maze[startX][startY],maze[startX - 1][startY])
-        maze[startX - 1][startY].visited = True
-        maze[startX][startY].left = False
-        maze[startX - 1][startY].right = False
-        visited.append(maze[startX - 1][startY])
-        recenter(maze[startX - 1][startY])
+        path = maze[startX-1][startY]
+    if int == 1:
+        path = maze[startX][startY-1]
+    if int == 2:
+        path = maze[startX+1][startY]
+    if int == 3:
+        path = maze[startX][startY+1]
+    if int == -1:
+        path = current.before
+        visited -= 1
+    current.beenTo = True
+    current.left = False
+    path.right = False
+    visited = visited + 1
+    path.before = current
 
-    elif int == 1:
-        Node(maze[startX][startY], maze[startX][startY - 1])
-        Node(maze[startX][startY], maze[startX][startY - 1]).before = currentNode
-        currentNode = Node(maze[startX][startY], maze[startX][startY - 1])
-        maze[startX][startY - 1].visited = True
-        maze[startX][startY].top = False
-        maze[startX][startY - 1].bottom = False
-        visited.append(maze[startX][startY - 1])
-        recenter(maze[startX][startY - 1])
+    recenter(path)
+    #type(current)
+    return visited
 
-    elif (int == 2):
-        Node(maze[startX][startY], maze[startX + 1][startY])
-        Node(maze[startX][startY], maze[startX + 1][startY]).before = currentNode
-        currentNode = Node(maze[startX][startY], maze[startX + 1][startY])
-        maze[startX + 1][startY].visited = True
-        maze[startX][startY].right = False
-        maze[startX + 1][startY].left = False
-        visited.append(maze[startX + 1][startY])
-        recenter(maze[startX + 1][startY])
-
-    elif (int == 3):
-        Node(maze[startX][startY], maze[startX][startY + 1])
-        Node(maze[startX][startY], maze[startX][startY + 1]).before = currentNode
-        currentNode = Node(maze[startX][startY], maze[startX][startY + 1])
-        maze[startX][startY + 1].visited = True
-        maze[startX][startY].bottom = False
-        maze[startX][startY + 1].top = False
-        visited.append(maze[startX][startY + 1])
-        recenter(maze[startX][startY + 1])
-
-def allTried():
-    if len(maze) == len(visited):
+def allTried(visited):
+    print("All Tried")
+    print(tall * wide)
+    print(visited)
+    if tall * wide == visited:
         return True
     else:
         return False
 
-def backup():
-    print("Backup")
-
 def recenter(square):
+    print("recenter")
+    global startX
+    global startY
     startX = square.x
     startY = square.y
+    print(startX)
+    print(startY)
 
 mazeCreate()
