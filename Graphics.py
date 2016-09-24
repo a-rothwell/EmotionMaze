@@ -25,12 +25,15 @@ boxWidth = int((screenHeight-100) / numBoxes)
 
 xPoint = screenWidth/2-numBoxes/2*boxWidth
 yPoint = 10
+endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth), int(boxWidth * numBoxes-boxWidth+10),
+                                      int(screenWidth/2+numBoxes/2*boxWidth+boxWidth), int(boxWidth * numBoxes+10), fill = "green")
+
 maze = list()
 n = 0
 # Draw Horizontal Maze Lines
 while int(yPoint) <= 10 + boxWidth * numBoxes:
     while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth):
-        if:  # THis will be changed to if the square has a top or is bottom of the maze
+        if True:  # THis will be changed to if the square has a top or is bottom of the maze
             maze.append(canvas.create_line(xPoint, yPoint, xPoint + boxWidth, yPoint))
         else:
             continue
@@ -104,8 +107,9 @@ class Player:
                 break
 
 
-player = Player(20, 20, boxWidth/2)
-playerPiece = canvas.create_rectangle(player.xLocation, player.yLocation, player.xLocation+player.size+1, player.yLocation+player.size+1, fill="red")
+player = Player(screenWidth/2-numBoxes/2*boxWidth, 11, boxWidth/2)
+playerPiece = canvas.create_rectangle(player.xLocation, player.yLocation, player.xLocation+player.size+1,
+                                      player.yLocation+player.size+1, fill="red")
 # canvas.delete("all")
 root.grid()
 root.bind('<Left>', player.movePlayerLeft)
