@@ -14,14 +14,45 @@ frame = Frame(root, background="gray", width=screenWidth, height=50)
 frame.pack(side=TOP)
 
 # Canvas is used to draw things in tkinter
-canvas = Canvas(root, width=screenWidth, height=screenHeight)
+canvas = Canvas(root, width=screenWidth, height=screenHeight-20)
 canvas.pack()
-numBoxes = 10
-boxWidth = (screenHeight - 100) / numBoxes
-topBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 50, screenWidth/2+numBoxes/2*boxWidth, 50)
-bottomBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, boxWidth*numBoxes, screenWidth/2+numBoxes/2*boxWidth, boxWidth*numBoxes)
-leftBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 50, screenWidth/2-numBoxes/2*boxWidth, boxWidth * numBoxes)
-rightBorderLine = canvas.create_line(screenWidth/2+numBoxes/2*boxWidth, 50, screenWidth/2+numBoxes/2*boxWidth, boxWidth * numBoxes)
+numBoxes = 50
+boxWidth = int((screenHeight-100) / numBoxes)
+# topBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 50, screenWidth/2+numBoxes/2*boxWidth, 50)
+# bottomBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, boxWidth*numBoxes, screenWidth/2+numBoxes/2*boxWidth, boxWidth*numBoxes)
+# leftBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 50, screenWidth/2-numBoxes/2*boxWidth, boxWidth * numBoxes)
+# rightBorderLine = canvas.create_line(screenWidth/2+numBoxes/2*boxWidth, 50, screenWidth/2+numBoxes/2*boxWidth, boxWidth * numBoxes)
+
+xPoint = screenWidth/2-numBoxes/2*boxWidth
+yPoint = 10
+maze = list()
+n = 0
+# Draw Horizontal Maze Lines
+while int(yPoint) <= 10 + boxWidth * numBoxes:
+    while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth):
+        if:  # THis will be changed to if the square has a top or is bottom of the maze
+            maze.append(canvas.create_line(xPoint, yPoint, xPoint + boxWidth, yPoint))
+        else:
+            continue
+        xPoint += boxWidth
+        #print(xPoint)
+    xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
+    yPoint += boxWidth
+    #print(yPoint)
+# Draw Vertical Maze Lines
+xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
+yPoint = 10
+while int(yPoint) <= boxWidth * numBoxes:
+    while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth)+boxWidth:
+        if True:
+            # THis will be changed to if the square has a Left
+            # or is far right of the maze(watch out for start and end of maze
+            maze.append(canvas.create_line(xPoint, yPoint, xPoint, yPoint + boxWidth))
+        else:
+            continue
+        xPoint += boxWidth
+    xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
+    yPoint += boxWidth
 
 
 class Player:
