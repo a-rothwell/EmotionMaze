@@ -52,6 +52,12 @@ def findneighbor(startX,startY):
     neighborWall = random.randint(0,4)
     if(neighborWall == 0 and startX != 0):
         return 0
+    elif(neighborWall == 1 and startY != 0):
+        return 1
+    elif(neighborWall == 2 and startX != 9):
+        return 2
+    elif(neighborWall == 3 and startY != 9):
+        return 3
     else:
         return False
 
