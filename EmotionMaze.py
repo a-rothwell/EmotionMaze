@@ -17,19 +17,17 @@ class Node:
         self.squareOne = squareOne
         self.squareTwo = squareTwo
         self.connectors = list()
+        self.before = before
 
 tall = 10
 wide = 10
-maze = list()
 visited = list()
 nodes = list()
-for x in range(0,tall):
-    for y in range(0,wide):
-        maze.append(Square(x,y))
+before = None
+maze = [[Square(x,y) for x in range(0,wide)] for y in range(0,tall)]
 
-startX = random.randint(0, tall)
-startY = random.randint(0, wide)
-
+startX = 0
+startY = random.randint(0, tall)
 def mazeCreate():
     if findneighbor(startX,startY) == 0 and not maze[startX - 1][startY].visited:
         createnode(startX, startY, 0)
@@ -64,25 +62,33 @@ def findneighbor(startX,startY):
 
 
 def createnode(startX, startY, int):
+    global currentNode
+    currentNode = "Default"
     startingIndex = (startX * 10 + startY)
-    if(int == 0):
-        nodes.append(Node(maze[startX][startY],maze[startX - 1][startY]))
+    if int == 0:
+        Node(maze[startX][startY],maze[startX - 1][startY])
+        Node(maze[startX][startY], maze[startX - 1][startY]).before = currentNode
+        currentNode = Node(maze[startX][startY],maze[startX - 1][startY])
         maze[startX - 1][startY].visited = True
         maze[startX][startY].left = False
         maze[startX - 1][startY].right = False
         visited.append(maze[startX - 1][startY])
         recenter(maze[startX - 1][startY])
 
-    elif(int == 1):
-        nodes.append(Node(maze[startX][startY], maze[startX][startY - 1]))
+    elif int == 1:
+        Node(maze[startX][startY], maze[startX][startY - 1])
+        Node(maze[startX][startY], maze[startX][startY - 1]).before = currentNode
+        currentNode = Node(maze[startX][startY], maze[startX][startY - 1])
         maze[startX][startY - 1].visited = True
-        maze.index((startingIndex)).top = False
+        maze[startX][startY].top = False
         maze[startX][startY - 1].bottom = False
         visited.append(maze[startX][startY - 1])
         recenter(maze[startX][startY - 1])
 
     elif (int == 2):
-        nodes.append(Node(maze[startX][startY], maze[startX + 1][startY]))
+        Node(maze[startX][startY], maze[startX + 1][startY])
+        Node(maze[startX][startY], maze[startX + 1][startY]).before = currentNode
+        currentNode = Node(maze[startX][startY], maze[startX + 1][startY])
         maze[startX + 1][startY].visited = True
         maze[startX][startY].right = False
         maze[startX + 1][startY].left = False
@@ -90,7 +96,9 @@ def createnode(startX, startY, int):
         recenter(maze[startX + 1][startY])
 
     elif (int == 3):
-        nodes.append(Node(maze[startX][startY], maze[startX][startY + 1]))
+        Node(maze[startX][startY], maze[startX][startY + 1])
+        Node(maze[startX][startY], maze[startX][startY + 1]).before = currentNode
+        currentNode = Node(maze[startX][startY], maze[startX][startY + 1])
         maze[startX][startY + 1].visited = True
         maze[startX][startY].bottom = False
         maze[startX][startY + 1].top = False
@@ -104,8 +112,10 @@ def allTried():
         return False
 
 def backup():
-    temp = -1
+    print("Backup")
 
 def recenter(square):
     startX = square.x
     startY = square.y
+
+mazeCreate()
