@@ -55,7 +55,7 @@ root.bind('<Left>', player.movePlayerLeft)
 root.bind('<Right>', player.movePlayerRight)
 root.bind('<Up>', player.movePlayerUp)
 root.bind('<Down>', player.movePlayerDown)
-
+#Updates Window
 def updateWindow():
     root.after(10, updateWindow)
     global playerPiece
