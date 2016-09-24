@@ -28,13 +28,13 @@ yPoint = 10
 endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth), int(boxWidth * numBoxes-boxWidth+10),
                                       int(screenWidth/2+numBoxes/2*boxWidth+boxWidth), int(boxWidth * numBoxes+10), fill = "green")
 
-maze = list()
+graphMaze = list()
 n = 0
 # Draw Horizontal Maze Lines
 while int(yPoint) <= 10 + boxWidth * numBoxes:
     while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth):
         if True:  # THis will be changed to if the square has a top or is bottom of the maze
-            maze.append(canvas.create_line(xPoint, yPoint, xPoint + boxWidth, yPoint))
+            graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint + boxWidth, yPoint))
         else:
             continue
         xPoint += boxWidth
@@ -50,7 +50,7 @@ while int(yPoint) <= boxWidth * numBoxes:
         if True:
             # THis will be changed to if the square has a Left
             # or is far right of the maze(watch out for start and end of maze
-            maze.append(canvas.create_line(xPoint, yPoint, xPoint, yPoint + boxWidth))
+            graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint, yPoint + boxWidth))
         else:
             continue
         xPoint += boxWidth
