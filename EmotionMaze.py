@@ -27,7 +27,9 @@ before = None
 maze = [[Square(x,y) for x in range(0,wide)] for y in range(0,tall)]
 
 startX = 0
-startY = random.randint(0, tall)
+startY = random.randint(0, tall - 1)
+print(startX)
+print(startY)
 def mazeCreate():
     if findneighbor(startX,startY) == 0 and not maze[startX - 1][startY].visited:
         createnode(startX, startY, 0)
@@ -40,10 +42,11 @@ def mazeCreate():
     else:
         if not allTried():
             backup()
+            print("Maze Create")
             mazeCreate()
         else:
             #implement graphics here
-            temp = -1
+            print("Exit")
 
 
 def findneighbor(startX,startY):
@@ -64,7 +67,6 @@ def findneighbor(startX,startY):
 def createnode(startX, startY, int):
     global currentNode
     currentNode = "Default"
-    startingIndex = (startX * 10 + startY)
     if int == 0:
         Node(maze[startX][startY],maze[startX - 1][startY])
         Node(maze[startX][startY], maze[startX - 1][startY]).before = currentNode
