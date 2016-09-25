@@ -155,9 +155,9 @@ rightBorderLine = canvas.create_line(screenWidth/2+numBoxes/2*boxWidth , 10, scr
 
 xPoint = screenWidth/2-numBoxes/2*boxWidth
 yPoint = 10
-endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth)-boxWidth, int(boxWidth * numBoxes-boxWidth+10),
-                                      int(screenWidth/2+numBoxes/2*boxWidth+boxWidth)-boxWidth,
-                                      int(boxWidth * numBoxes+10), fill = "light green", outline=None)
+#endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth)-boxWidth, int(boxWidth * numBoxes-boxWidth+10),
+#                                     int(screenWidth/2+numBoxes/2*boxWidth+boxWidth)-boxWidth,
+#                                      int(boxWidth * numBoxes+10), fill = "light green", outline=None)
 
 class Hitbox():
     def __init__(self, minX , maxX , minY, maxY):
@@ -201,7 +201,7 @@ while y < tall:
     x = 0
     y += 1
     yPoint += boxWidth
-
+#print(len(borderHitboxes))
 
 
 class Player:
@@ -239,11 +239,11 @@ class Player:
     def playerCanMoveUp(self):
         print("Hitbox xMin: " + str(self.hitbox.minX) + " Hitbox xMax: " + str(self.hitbox.maxX) + "\n Hitbox yMin: "
               + str(self.hitbox.minY) + "Hitbox yMax: " + str(self.hitbox.maxY))
-        return self.checkForCollision(Hitbox(self.hitbox.minX , self.hitbox.maxX,self.hitbox.minY + 1 , self.hitbox.maxY + 1))
+        return self.checkForCollision(Hitbox(self.hitbox.minX , self.hitbox.maxX,self.hitbox.minY -1 , self.hitbox.maxY - 1))
     def playerCanMoveDown(self):
         print("Hitbox xMin: " + str(self.hitbox.minX) + " Hitbox xMax: " + str(self.hitbox.maxX) + "\n Hitbox yMin: "
               + str(self.hitbox.minY) + "Hitbox yMax: " + str(self.hitbox.maxY))
-        return self.checkForCollision(Hitbox(self.hitbox.minX , self.hitbox.maxX,self.hitbox.minY - 1 , self.hitbox.maxY - 1))
+        return self.checkForCollision(Hitbox(self.hitbox.minX , self.hitbox.maxX,self.hitbox.minY + 1 , self.hitbox.maxY + 1))
     def movePlayerLeft(self, event) :
         count = 0
         while(count < self.speed) :
@@ -281,7 +281,8 @@ class Player:
             else:
                 break
 
-
+print("Border Hitbox xMin: " + str(borderHitboxes.__getitem__(600).minX) + " Hitbox xMax: " + str(borderHitboxes.__getitem__(600).maxX) + "\n Hitbox yMin: "
+              + str(borderHitboxes.__getitem__(600).minY) + "Hitbox yMax: " + str(borderHitboxes.__getitem__(600).maxY))
 
 player = Player(screenWidth/2-numBoxes/2*boxWidth + 1, 11, boxWidth/2)
 playerPiece = canvas.create_rectangle(player.xLocation, player.yLocation, player.xLocation+player.size+1,
