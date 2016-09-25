@@ -12,46 +12,39 @@ class Square:
         self.x = x
         self.y = y
 
-    def __getitem__(self, item):
-        return self.x
-        return self.y
-
 tall = 10
-wide = 10
+wide = tall
 maze = [[Square(x,y) for y in range(0,wide)] for x in range(0,tall)]
 
 solution = list()
+solution.append(maze[0][0])
 #for i in range(0,wide):
     #for j in range(0,tall):
         #print("X is in square" + str(maze[i][j].x))
         #print("Y is in square" + str(maze[i][j].y))
 visited = 0
-global startX
 startX = 0
-global startY
 startY = 0
-print("The X startPoint is: " + str(startX))
-print("The Y startPoint is: " + str(startY))
-# print(" ")
 
 def mazeCreate():
     global visited
     global startX
     global startY
-    for num in range(0,100):
-        print("---------New Thread --------" + str(num))
-        addpath(startX, startY, findneighbor(startX,startY))
+    for num in range(0 , (tall * 2) ** 2):
+        addpath(findneighbor())
 
 
-def findneighbor(startX,startY):
+def findneighbor():
+    global startX
+    global startY
     neighborWall = random.randint(0, 3)
     if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
         return 0
     elif neighborWall == 1 and startY != 0 and not maze[startX][startY - 1].beenTo:
         return 1
-    elif neighborWall == 2 and startX != 9  and not maze[startX + 1][startY].beenTo:
+    elif neighborWall == 2 and startX != tall - 1  and not maze[startX + 1][startY].beenTo:
         return 2
-    elif neighborWall == 3 and startY != 9 and not maze[startX][startY - 1].beenTo:
+    elif neighborWall == 3 and startY != tall - 1 and not maze[startX][startY + 1].beenTo:
         return 3
     else:
         neighborWall = 0
@@ -60,57 +53,57 @@ def findneighbor(startX,startY):
             return num
 
         neighborWall = neighborWall + 1
-        if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
-            num = 0
+        if neighborWall == 1 and startY != 0 and not maze[startX ][startY - 1].beenTo:
+            num = 1
             return num
 
         neighborWall = neighborWall + 1
-        if neighborWall == 2 and startX != 9 and not maze[startX + 1][startY].beenTo:
+        if neighborWall == 2 and startX != tall - 1 and not maze[startX + 1][startY].beenTo:
             num = 2
             return num
         neighborWall = neighborWall + 1
-        if neighborWall == 3 and startY != 9 and not maze[startX][startY - 1].beenTo:
+        if neighborWall == 3 and startY != tall - 1 and not maze[startX][startY + 1].beenTo:
             num = 3
             return num
         else:
             return -1
 
 
-def addpath(startX, startY, int):
+def addpath(int):
     global visited
+    global startX
+    global startY
     current = maze[startX][startY]
     if int == -1:
-        print("DeadEnd")
         if len(solution) != 0:
-            print(solution)
             recenter(solution[len(solution)-1])
             solution.pop()
         return visited
     if int == 0:
         path = maze[startX-1][startY]
         path.before = current
-        solution.append(current)
+        solution.append(path)
         current.left = False
         path.right = False
         path.beenTo = True
     if int == 1:
-        path = maze[startX][startY-1]
+        path = maze[startX][startY - 1]
         path.before = current
-        solution.append(current)
+        solution.append(path)
         current.top = False
         path.bottom = False
         path.beenTo = True
     if int == 2:
-        path = maze[startX+1][startY]
+        path = maze[startX + 1][startY]
         path.before = current
-        solution.append(current)
+        solution.append(path)
         current.right = False
         path.left = False
         path.beenTo = True
     if int == 3:
-        path = maze[startX][startY+1]
+        path = maze[startX][startY + 1]
         path.before = current
-        solution.append(current)
+        solution.append(path)
         current.bottom = False
         path.top = False
         path.beenTo = True
@@ -118,14 +111,8 @@ def addpath(startX, startY, int):
     current.beenTo = True
     visited = visited + 1
     recenter(path)
-    #type(current)
     return visited
 
-def allTried(visited):
-    if tall * wide == visited:
-        return True
-    else:
-        return False
 
 
 def recenter(square):
@@ -133,22 +120,8 @@ def recenter(square):
     global startY
     startX = square.x
     startY = square.y
-    print(startX)
-    print(startY)
-
-def recentercase(x,y):
-    global startX
-    global startY
-    startX = x
-    startY = y
-    print(startX)
-    print(startY)
 
 mazeCreate()
-for i in range(0,wide):
-    for j in range(0,tall):
-        print("X is in square" + str(maze[i][j].beenTo))
-        print("Y is in square" + str(maze[i][j].beenTo))
 
 root = Tk()
 root.wm_title("Emotion Maze")
@@ -156,7 +129,7 @@ screenWidth = root.winfo_screenwidth()
 screenHeight = root.winfo_screenheight()
 # Resize tk window and sets its location
 root.geometry('%dx%d+%d+%d' % (screenWidth, screenHeight, -9, 0))
-root.resizable(FALSE, FALSE)
+# root.resizable(FALSE, FALSE)
 
 # Frame is a widget container
 frame = Frame(root, background="gray", width=screenWidth, height=50)
@@ -167,78 +140,109 @@ canvas = Canvas(root, width=screenWidth, height=screenHeight-20)
 canvas.pack()
 numBoxes = tall
 boxWidth = int((screenHeight-100) / numBoxes)
-# topBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 50, screenWidth/2+numBoxes/2*boxWidth, 50)
-# bottomBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, boxWidth*numBoxes, screenWidth/2+numBoxes/2*boxWidth, boxWidth*numBoxes)
-# leftBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 50, screenWidth/2-numBoxes/2*boxWidth, boxWidth * numBoxes)
-# rightBorderLine = canvas.create_line(screenWidth/2+numBoxes/2*boxWidth, 50, screenWidth/2+numBoxes/2*boxWidth, boxWidth * numBoxes)
+topBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 10, screenWidth/2+numBoxes/2*boxWidth, 10)
+bottomBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 10+boxWidth*numBoxes, screenWidth/2+numBoxes/2*boxWidth, 10+boxWidth*numBoxes)
+leftBorderLine = canvas.create_line(screenWidth/2-numBoxes/2*boxWidth, 10, screenWidth/2-numBoxes/2*boxWidth, 10+boxWidth * numBoxes)
+rightBorderLine = canvas.create_line(screenWidth/2+numBoxes/2*boxWidth , 10, screenWidth/2+numBoxes/2*boxWidth,
+                                     10+boxWidth * numBoxes)
 
 xPoint = screenWidth/2-numBoxes/2*boxWidth
 yPoint = 10
-endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth), int(boxWidth * numBoxes-boxWidth+10),
-                                      int(screenWidth/2+numBoxes/2*boxWidth+boxWidth), int(boxWidth * numBoxes+10), fill = "green")
+endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth)-boxWidth, int(boxWidth * numBoxes-boxWidth+10),
+                                      int(screenWidth/2+numBoxes/2*boxWidth+boxWidth)-boxWidth,
+                                      int(boxWidth * numBoxes+10), fill = "light green", outline=None)
 
-
+class Hitbox():
+    def __init__(self, xMin , xMax , yMin, yMax):
+        self.xMin = xMin
+        self.xMax = xMax
+        self.yMin = yMin
+        self.yMax = yMax
 
 graphMaze = list()
+borderHitboxes = list()
 x = 0
 y = 0
 # Draw Horizontal Maze Lines
-while int(yPoint) <= 10 + boxWidth * numBoxes:
-    while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth):
-        if maze[x][y].top:  # THis will be changed to if the square has a top or is bottom of the maze
+while y < tall:
+    while x < wide:
+        if maze[x][y].top:  # This will be changed to if the square has a top or is bottom of the maze
             graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint + boxWidth, yPoint))
+            borderHitboxes.append(Hitbox(xPoint,xPoint + boxWidth , yPoint, yPoint))
         else:
             pass
         xPoint += boxWidth
-        if x < wide - 1 :
-            x += 1
+        x += 1
     xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
     x = 0
-    if y < tall - 2:
-        y += 1
+    y += 1
     yPoint += boxWidth
 # Draw Vertical Maze Lines
 x = 0
 y = 0
 xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
 yPoint = 10
-while int(yPoint) <= boxWidth * numBoxes:
-    while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth)+boxWidth:
+while y < tall:
+    while x < wide:
         if maze[x][y].left:
             graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint, yPoint + boxWidth))
+            borderHitboxes.append(Hitbox(xPoint, xPoint, yPoint, yPoint + boxWidth))
         else:
             pass
         xPoint += boxWidth
-        if x < wide - 1 :
-            x += 1
+        x += 1
     xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
-    x=0
-    if y < tall - 2:
-        y += 1
+    x = 0
+    y += 1
     yPoint += boxWidth
 
 
 
 class Player:
     """Represents a Player Object"""
+
     def __init__(self, x, y, size):
         self.xLocation = x
         self.yLocation = y
         self.size = size
         self.speed = 5
+    def updateHitbox(self):
+        self.hitbox = Hitbox(self.xLocation, self.xLocation + self.size, self.yLocation, self.yLocation + self.size)
+    def checkForCollision(self, newHitbox):
+        xCollision = False
+        yCollision = False
+        for boxes in borderHitboxes:
+            if newHitbox.minX >= boxes.minX and newHitbox.minX <= boxes.maxX or newHitbox.maxX >= boxes.minX and newHitbox.maxX <= boxes.maxX :
+                xCollision = True
+            if newHitbox.minY >= boxes.minY and newHitbox.minY <= boxes.maxY or newHitbox.maxY >= boxes.minY and newHitbox.maxY <= boxes.maxY :
+                YCollision = True
+            if xCollision and yCollision:
+                return False
+            else:
+                return True
+
     def playerCanMoveRight(self):
-        return True
+        print("Hitbox xMin: " + str(self.hitbox.xMin) + " Hitbox xMax: " + str(self.hitbox.xMax) + "\n Hitbox yMin: "
+              + str(self.hitbox.yMin) + "Hitbox yMax: " + str(self.hitbox.yMax))
+        return self.checkForCollision(Hitbox(self.hitbox.xMin + 1, self.hitbox.xMax + 1,self.hitbox.yMin , self.hitbox.yMax))
     def playerCanMoveLeft(self):
-        return True
+        print("Hitbox xMin: " + str(self.hitbox.xMin) + " Hitbox xMax: " + str(self.hitbox.xMax) + "\n Hitbox yMin: "
+              + str(self.hitbox.yMin) + "Hitbox yMax: " + str(self.hitbox.yMax))
+        return self.checkForCollision(Hitbox(self.hitbox.xMin - 1, self.hitbox.xMax - 1, self.hitbox.yMin, self.hitbox.yMax))
     def playerCanMoveUp(self):
-        return True
+        print("Hitbox xMin: " + str(self.hitbox.xMin) + " Hitbox xMax: " + str(self.hitbox.xMax) + "\n Hitbox yMin: "
+              + str(self.hitbox.yMin) + "Hitbox yMax: " + str(self.hitbox.yMax))
+        return self.checkForCollision(Hitbox(self.hitbox.xMin , self.hitbox.xMax,self.hitbox.yMin + 1 , self.hitbox.yMax + 1))
     def playerCanMoveDown(self):
-        return True
+        print("Hitbox xMin: " + str(self.hitbox.xMin) + " Hitbox xMax: " + str(self.hitbox.xMax) + "\n Hitbox yMin: "
+              + str(self.hitbox.yMin) + "Hitbox yMax: " + str(self.hitbox.yMax))
+        return self.checkForCollision(Hitbox(self.hitbox.xMin , self.hitbox.xMax,self.hitbox.yMin - 1 , self.hitbox.yMax - 1))
     def movePlayerLeft(self, event) :
         count = 0
         while(count < self.speed) :
             if self.playerCanMoveLeft :
                 self.xLocation -= 1
+                self.updateHitbox()
                 count+=1
             else:
                 break
@@ -247,6 +251,7 @@ class Player:
         while count < self.speed :
             if self.playerCanMoveRight :
                 self.xLocation += 1
+                self.updateHitbox()
                 count += 1
             else :
                 break
@@ -255,6 +260,7 @@ class Player:
         while count < self.speed :
             if self.playerCanMoveUp :
                 self.yLocation -= 1
+                self.updateHitbox()
                 count += 1
             else :
                 break
@@ -263,12 +269,14 @@ class Player:
         while count < self.speed :
             if self.playerCanMoveDown:
                 self.yLocation += 1
+                self.updateHitbox()
                 count += 1
             else :
                 break
 
 
-player = Player(screenWidth/2-numBoxes/2*boxWidth, 11, boxWidth/2)
+
+player = Player(screenWidth/2-numBoxes/2*boxWidth + 1, 11, boxWidth/2)
 playerPiece = canvas.create_rectangle(player.xLocation, player.yLocation, player.xLocation+player.size+1,
                                       player.yLocation+player.size+1, fill="red")
 # canvas.delete("all")
