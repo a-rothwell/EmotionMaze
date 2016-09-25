@@ -1,7 +1,6 @@
 from tkinter import *
 import random
 
-
 class Square:
     left = True
     right = True
@@ -13,11 +12,15 @@ class Square:
         self.x = x
         self.y = y
 
+    def __getitem__(self, item):
+        return self.x
+        return self.y
 
 tall = 10
 wide = 10
-maze = [[Square(x,y) for x in range(0,wide)] for y in range(0,tall)]
+maze = [[Square(x,y) for y in range(0,wide)] for x in range(0,tall)]
 
+solution = list()
 #for i in range(0,wide):
     #for j in range(0,tall):
         #print("X is in square" + str(maze[i][j].x))
@@ -26,56 +29,47 @@ visited = 0
 global startX
 startX = 0
 global startY
-#startY = random.randint(0, tall - 1)
 startY = 0
-# print("The X startPoint is: " + str(startX))
-# print("The Y startPoint is: " + str(startY))
+print("The X startPoint is: " + str(startX))
+print("The Y startPoint is: " + str(startY))
 # print(" ")
 
 def mazeCreate():
     global visited
-    while(tall * wide != visited):
+    global startX
+    global startY
+    for num in range(0,100):
+        print("---------New Thread --------" + str(num))
         addpath(startX, startY, findneighbor(startX,startY))
-
-    #implement graphics here
-    print("Exit")
 
 
 def findneighbor(startX,startY):
     neighborWall = random.randint(0, 3)
     if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
-        print("returned 0")
         return 0
     elif neighborWall == 1 and startY != 0 and not maze[startX][startY - 1].beenTo:
-        print("returned 1")
         return 1
     elif neighborWall == 2 and startX != 9  and not maze[startX + 1][startY].beenTo:
-        print("returned 2")
         return 2
     elif neighborWall == 3 and startY != 9 and not maze[startX][startY - 1].beenTo:
-        print("returned 3")
         return 3
     else:
         neighborWall = 0
         if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
-            print("returned 0")
             num = 0
             return num
 
         neighborWall = neighborWall + 1
         if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
-            print("returned 0")
             num = 0
             return num
 
         neighborWall = neighborWall + 1
         if neighborWall == 2 and startX != 9 and not maze[startX + 1][startY].beenTo:
-            print("returned 2")
             num = 2
             return num
         neighborWall = neighborWall + 1
         if neighborWall == 3 and startY != 9 and not maze[startX][startY - 1].beenTo:
-            print("returned 3")
             num = 3
             return num
         else:
@@ -85,47 +79,56 @@ def findneighbor(startX,startY):
 def addpath(startX, startY, int):
     global visited
     current = maze[startX][startY]
-    print("Add Path in this direction..." + str(int))
     if int == -1:
-        path = current.before
-        current.beenTo = True
-        recenter(path)
+        print("DeadEnd")
+        if len(solution) != 0:
+            print(solution)
+            recenter(solution[len(solution)-1])
+            solution.pop()
         return visited
     if int == 0:
         path = maze[startX-1][startY]
+        path.before = current
+        solution.append(current)
         current.left = False
         path.right = False
+        path.beenTo = True
     if int == 1:
         path = maze[startX][startY-1]
+        path.before = current
+        solution.append(current)
         current.top = False
         path.bottom = False
+        path.beenTo = True
     if int == 2:
         path = maze[startX+1][startY]
+        path.before = current
+        solution.append(current)
         current.right = False
         path.left = False
+        path.beenTo = True
     if int == 3:
         path = maze[startX][startY+1]
+        path.before = current
+        solution.append(current)
         current.bottom = False
         path.top = False
+        path.beenTo = True
+    path.beenTo = True
     current.beenTo = True
     visited = visited + 1
-    path.before = current
-
     recenter(path)
     #type(current)
     return visited
 
 def allTried(visited):
-    print("All Tried")
-    print(tall * wide)
-    print(visited)
     if tall * wide == visited:
         return True
     else:
         return False
 
+
 def recenter(square):
-    print("recenter")
     global startX
     global startY
     startX = square.x
@@ -133,7 +136,19 @@ def recenter(square):
     print(startX)
     print(startY)
 
+def recentercase(x,y):
+    global startX
+    global startY
+    startX = x
+    startY = y
+    print(startX)
+    print(startY)
+
 mazeCreate()
+for i in range(0,wide):
+    for j in range(0,tall):
+        print("X is in square" + str(maze[i][j].beenTo))
+        print("Y is in square" + str(maze[i][j].beenTo))
 
 root = Tk()
 root.wm_title("Emotion Maze")
@@ -162,41 +177,37 @@ yPoint = 10
 endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth), int(boxWidth * numBoxes-boxWidth+10),
                                       int(screenWidth/2+numBoxes/2*boxWidth+boxWidth), int(boxWidth * numBoxes+10), fill = "green")
 
+
+
 graphMaze = list()
 x = 0
 y = 0
-print("Carrot")
 # Draw Horizontal Maze Lines
 while int(yPoint) <= 10 + boxWidth * numBoxes:
     while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth):
-        if maze[x][y].top == True or yPoint >= boxWidth*10:  # THis will be changed to if the square has a top or is bottom of the maze
+        if maze[x][y].top:  # THis will be changed to if the square has a top or is bottom of the maze
             graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint + boxWidth, yPoint))
         else:
-            waterMelon = "cool"
+            pass
         xPoint += boxWidth
         if x < wide - 1 :
             x += 1
-        print(xPoint)
     xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
     x = 0
     if y < tall - 2:
         y += 1
     yPoint += boxWidth
-    print(yPoint)
 # Draw Vertical Maze Lines
-print("potato")
 x = 0
 y = 0
 xPoint = int(screenWidth/2-numBoxes/2*boxWidth)
 yPoint = 10
 while int(yPoint) <= boxWidth * numBoxes:
     while int(xPoint) <= int(screenWidth/2+numBoxes/2*boxWidth)+boxWidth:
-        if maze[x][y].left==True or xPoint >= boxWidth*10:
-            # THis will be changed to if the square has a Left
-            # or is far right of the maze(watch out for start and end of maze
+        if maze[x][y].left:
             graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint, yPoint + boxWidth))
         else:
-            waterMelon="cool"
+            pass
         xPoint += boxWidth
         if x < wide - 1 :
             x += 1
@@ -205,6 +216,7 @@ while int(yPoint) <= boxWidth * numBoxes:
     if y < tall - 2:
         y += 1
     yPoint += boxWidth
+
 
 
 class Player:
@@ -267,6 +279,7 @@ root.bind('<Up>', player.movePlayerUp)
 root.bind('<Down>', player.movePlayerDown)
 #Updates Window
 def updateWindow():
+
     root.after(10, updateWindow)
     global playerPiece
     canvas.delete(playerPiece)
