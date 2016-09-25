@@ -12,7 +12,7 @@ class Square:
         self.x = x
         self.y = y
 
-tall = 10
+tall = 25
 wide = tall
 maze = [[Square(x,y) for y in range(0,wide)] for x in range(0,tall)]
 
@@ -120,6 +120,13 @@ def recenter(square):
     global startY
     startX = square.x
     startY = square.y
+    if startX == tall - 1 and startY == tall - 1:
+        pntSol = list()
+        pntSol = solution.copy()
+        pntSol.reverse()
+        for points in pntSol:
+            print(pntSol[-1:])
+            pntSol.pop()
 
 mazeCreate()
 
@@ -153,20 +160,19 @@ endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth)-box
                                       int(boxWidth * numBoxes+10), fill = "light green", outline=None)
 
 class Hitbox():
-    def __init__(self, xMin , xMax , yMin, yMax):
-        self.xMin = xMin
-        self.xMax = xMax
-        self.yMin = yMin
-        self.yMax = yMax
+    def __init__(self, minX , maxX , minY, maxY):
+        self.minX = minX
+        self.maxX = maxX
+        self.minY = minY
+        self.maxY = maxY
 
 graphMaze = list()
 borderHitboxes = list()
 x = 0
 y = 0
-# Draw Horizontal Maze Lines
 while y < tall:
     while x < wide:
-        if maze[x][y].top:  # This will be changed to if the square has a top or is bottom of the maze
+        if maze[x][y].top:
             graphMaze.append(canvas.create_line(xPoint, yPoint, xPoint + boxWidth, yPoint))
             borderHitboxes.append(Hitbox(xPoint,xPoint + boxWidth , yPoint, yPoint))
         else:
@@ -206,6 +212,7 @@ class Player:
         self.yLocation = y
         self.size = size
         self.speed = 5
+        self.updateHitbox()
     def updateHitbox(self):
         self.hitbox = Hitbox(self.xLocation, self.xLocation + self.size, self.yLocation, self.yLocation + self.size)
     def checkForCollision(self, newHitbox):
@@ -215,32 +222,32 @@ class Player:
             if newHitbox.minX >= boxes.minX and newHitbox.minX <= boxes.maxX or newHitbox.maxX >= boxes.minX and newHitbox.maxX <= boxes.maxX :
                 xCollision = True
             if newHitbox.minY >= boxes.minY and newHitbox.minY <= boxes.maxY or newHitbox.maxY >= boxes.minY and newHitbox.maxY <= boxes.maxY :
-                YCollision = True
+                yCollision = True
             if xCollision and yCollision:
                 return False
             else:
                 return True
 
     def playerCanMoveRight(self):
-        print("Hitbox xMin: " + str(self.hitbox.xMin) + " Hitbox xMax: " + str(self.hitbox.xMax) + "\n Hitbox yMin: "
-              + str(self.hitbox.yMin) + "Hitbox yMax: " + str(self.hitbox.yMax))
-        return self.checkForCollision(Hitbox(self.hitbox.xMin + 1, self.hitbox.xMax + 1,self.hitbox.yMin , self.hitbox.yMax))
+        print("Hitbox xMin: " + str(self.hitbox.minX) + " Hitbox xMax: " + str(self.hitbox.maxX) + "\n Hitbox yMin: "
+              + str(self.hitbox.minY) + "Hitbox yMax: " + str(self.hitbox.maxY))
+        return self.checkForCollision(Hitbox(self.hitbox.minX + 1, self.hitbox.maxX + 1,self.hitbox.minY , self.hitbox.maxY))
     def playerCanMoveLeft(self):
-        print("Hitbox xMin: " + str(self.hitbox.xMin) + " Hitbox xMax: " + str(self.hitbox.xMax) + "\n Hitbox yMin: "
-              + str(self.hitbox.yMin) + "Hitbox yMax: " + str(self.hitbox.yMax))
-        return self.checkForCollision(Hitbox(self.hitbox.xMin - 1, self.hitbox.xMax - 1, self.hitbox.yMin, self.hitbox.yMax))
+        print("Hitbox xMin: " + str(self.hitbox.minX) + " Hitbox xMax: " + str(self.hitbox.maxX) + "\n Hitbox yMin: "
+              + str(self.hitbox.minY) + "Hitbox yMax: " + str(self.hitbox.maxY))
+        return self.checkForCollision(Hitbox(self.hitbox.minX - 1, self.hitbox.maxX - 1, self.hitbox.minY, self.hitbox.maxY))
     def playerCanMoveUp(self):
-        print("Hitbox xMin: " + str(self.hitbox.xMin) + " Hitbox xMax: " + str(self.hitbox.xMax) + "\n Hitbox yMin: "
-              + str(self.hitbox.yMin) + "Hitbox yMax: " + str(self.hitbox.yMax))
-        return self.checkForCollision(Hitbox(self.hitbox.xMin , self.hitbox.xMax,self.hitbox.yMin + 1 , self.hitbox.yMax + 1))
+        print("Hitbox xMin: " + str(self.hitbox.minX) + " Hitbox xMax: " + str(self.hitbox.maxX) + "\n Hitbox yMin: "
+              + str(self.hitbox.minY) + "Hitbox yMax: " + str(self.hitbox.maxY))
+        return self.checkForCollision(Hitbox(self.hitbox.minX , self.hitbox.maxX,self.hitbox.minY + 1 , self.hitbox.maxY + 1))
     def playerCanMoveDown(self):
-        print("Hitbox xMin: " + str(self.hitbox.xMin) + " Hitbox xMax: " + str(self.hitbox.xMax) + "\n Hitbox yMin: "
-              + str(self.hitbox.yMin) + "Hitbox yMax: " + str(self.hitbox.yMax))
-        return self.checkForCollision(Hitbox(self.hitbox.xMin , self.hitbox.xMax,self.hitbox.yMin - 1 , self.hitbox.yMax - 1))
+        print("Hitbox xMin: " + str(self.hitbox.minX) + " Hitbox xMax: " + str(self.hitbox.maxX) + "\n Hitbox yMin: "
+              + str(self.hitbox.minY) + "Hitbox yMax: " + str(self.hitbox.maxY))
+        return self.checkForCollision(Hitbox(self.hitbox.minX , self.hitbox.maxX,self.hitbox.minY - 1 , self.hitbox.maxY - 1))
     def movePlayerLeft(self, event) :
         count = 0
         while(count < self.speed) :
-            if self.playerCanMoveLeft :
+            if self.playerCanMoveLeft():
                 self.xLocation -= 1
                 self.updateHitbox()
                 count+=1
@@ -249,7 +256,7 @@ class Player:
     def movePlayerRight(self, event):
         count = 0
         while count < self.speed :
-            if self.playerCanMoveRight :
+            if self.playerCanMoveRight():
                 self.xLocation += 1
                 self.updateHitbox()
                 count += 1
@@ -258,7 +265,7 @@ class Player:
     def movePlayerUp(self, event):
         count = 0
         while count < self.speed :
-            if self.playerCanMoveUp :
+            if self.playerCanMoveUp():
                 self.yLocation -= 1
                 self.updateHitbox()
                 count += 1
@@ -267,11 +274,11 @@ class Player:
     def movePlayerDown(self, event):
         count = 0
         while count < self.speed :
-            if self.playerCanMoveDown:
+            if self.playerCanMoveDown():
                 self.yLocation += 1
                 self.updateHitbox()
                 count += 1
-            else :
+            else:
                 break
 
 
@@ -295,6 +302,4 @@ def updateWindow():
                             player.yLocation + player.size + 1, fill="red")
 
 root.after(10, updateWindow)
-
 root.mainloop()
-
