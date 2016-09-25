@@ -7,7 +7,6 @@ class Square:
     top = True
     bottom = True
     beenTo = False
-    before = None
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -15,9 +14,12 @@ class Square:
 tall = 25
 wide = tall
 maze = [[Square(x,y) for y in range(0,wide)] for x in range(0,tall)]
-
+foundSolution = False
 solution = list()
+pntSol = list()
 solution.append(maze[0][0])
+pntSol.append(maze[0][0])
+pntSol.append(maze[tall - 1][wide - 1])
 #for i in range(0,wide):
     #for j in range(0,tall):
         #print("X is in square" + str(maze[i][j].x))
@@ -25,26 +27,30 @@ solution.append(maze[0][0])
 visited = 0
 startX = 0
 startY = 0
-
+neglast = False
 def mazeCreate():
     global visited
     global startX
     global startY
-    for num in range(0 , (tall * 2) ** 2):
+    for num in range(0 , 10000):
         addpath(findneighbor())
 
 
 def findneighbor():
     global startX
     global startY
+    global foundSolution
     neighborWall = random.randint(0, 3)
-    if neighborWall == 0 and startX != 0 and not maze[startX - 1][startY].beenTo:
+    if maze[startX][startY] == maze[tall - 1][wide - 1]:
+        foundSolution = True
+        return -1
+    if neighborWall == 0 and startX != 0 and maze[startX - 1][startY].beenTo == False:
         return 0
-    elif neighborWall == 1 and startY != 0 and not maze[startX][startY - 1].beenTo:
+    elif neighborWall == 1 and startY != 0 and maze[startX][startY - 1].beenTo == False:
         return 1
-    elif neighborWall == 2 and startX != tall - 1  and not maze[startX + 1][startY].beenTo:
+    elif neighborWall == 2 and startX != tall - 1  and maze[startX + 1][startY].beenTo == False:
         return 2
-    elif neighborWall == 3 and startY != tall - 1 and not maze[startX][startY + 1].beenTo:
+    elif neighborWall == 3 and startY != tall - 1 and maze[startX][startY + 1].beenTo == False:
         return 3
     else:
         neighborWall = 0
@@ -73,40 +79,54 @@ def addpath(int):
     global visited
     global startX
     global startY
+    global neglast
     current = maze[startX][startY]
     if int == -1:
+        if(neglast == True and foundSolution == False):
+            pntSol.pop()
+            neglast = True
         if len(solution) != 0:
             recenter(solution[len(solution)-1])
             solution.pop()
+            neglast = True
+
         return visited
     if int == 0:
         path = maze[startX-1][startY]
-        path.before = current
         solution.append(path)
+        if (foundSolution == False):
+            pntSol.append(current)
         current.left = False
         path.right = False
         path.beenTo = True
+        neglast = False
     if int == 1:
         path = maze[startX][startY - 1]
-        path.before = current
         solution.append(path)
+        if(foundSolution == False):
+            pntSol.append(current)
         current.top = False
         path.bottom = False
         path.beenTo = True
+        neglast = False
     if int == 2:
         path = maze[startX + 1][startY]
-        path.before = current
         solution.append(path)
+        if (foundSolution == False):
+            pntSol.append(current)
         current.right = False
         path.left = False
         path.beenTo = True
+        neglast = False
     if int == 3:
         path = maze[startX][startY + 1]
-        path.before = current
         solution.append(path)
+        if (foundSolution == False):
+            pntSol.append(current)
         current.bottom = False
         path.top = False
         path.beenTo = True
+        neglast = False
     path.beenTo = True
     current.beenTo = True
     visited = visited + 1
@@ -116,17 +136,11 @@ def addpath(int):
 
 
 def recenter(square):
+    global pntSol
     global startX
     global startY
     startX = square.x
     startY = square.y
-    if startX == tall - 1 and startY == tall - 1:
-        pntSol = list()
-        pntSol = solution.copy()
-        pntSol.reverse()
-        for points in pntSol:
-            print(pntSol[-1:])
-            pntSol.pop()
 
 mazeCreate()
 
@@ -156,9 +170,17 @@ rightBorderLine = canvas.create_line(screenWidth/2+numBoxes/2*boxWidth , 10, scr
 xPoint = screenWidth/2-numBoxes/2*boxWidth
 yPoint = 10
 #endPosition = canvas.create_rectangle(int(screenWidth/2+numBoxes/2*boxWidth)-boxWidth, int(boxWidth * numBoxes-boxWidth+10),
-#                                     int(screenWidth/2+numBoxes/2*boxWidth+boxWidth)-boxWidth,
-#                                      int(boxWidth * numBoxes+10), fill = "light green", outline=None)
+      #                            int(screenWidth/2+numBoxes/2*boxWidth+boxWidth)-boxWidth,
+        #                            int(boxWidth * numBoxes+10), fill = "light green", outline='')
 
+count = 0
+while(count<len(pntSol)):
+    xPointOne = screenWidth/2-numBoxes/2*boxWidth + pntSol[count].x * boxWidth
+    yPointOne = 10 + pntSol[count].y * boxWidth
+    xPointTwo = xPointOne + boxWidth
+    yPointTwo = yPointOne + boxWidth
+    canvas.create_rectangle(xPointOne, yPointOne, xPointTwo, yPointTwo, fill = "light green", outline = '')
+    count+= 1
 class Hitbox():
     def __init__(self, minX , maxX , minY, maxY):
         self.minX = minX
@@ -299,8 +321,8 @@ def updateWindow():
     root.after(10, updateWindow)
     global playerPiece
     canvas.delete(playerPiece)
-    playerPiece = canvas.create_rectangle(player.xLocation, player.yLocation, player.xLocation + player.size + 1,
-                            player.yLocation + player.size + 1, fill="red")
+    playerPiece = canvas.create_rectangle(player.xLocation, player.yLocation, player.xLocation + player.size + 5,
+                            player.yLocation + player.size + 5, fill="red")
 
 root.after(10, updateWindow)
 root.mainloop()
